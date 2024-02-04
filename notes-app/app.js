@@ -1,20 +1,11 @@
-const fs = require("node:fs");
-const msg = require('./notes.js');
-const validator = require('validator');
-const chalk = require('chalk');
-const yargs = require('yargs');
+const chalk = require('chalk')
+const yargs = require('yargs')
+const notes = require('./notes.js')
 
-const message = msg();
-console.log(message);
-/* fs.writeFileSync("notes.txt", "This file was created by Node.js!\n");
-fs.appendFileSync("notes.txt", "I appended this text with fs.appendFileSync.\n");
-fs.appendFileSync("notes.txt", message); */
-console.log(chalk.white.bgRed("Failure! " + message));
-console.log(validator.isEmail('johnny@example.com'));
-console.log(validator.isURL('www.example.com'));
-
+// Customize yargs version
 yargs.version('1.1.0')
-console.log(yargs.argv)
+
+// Create add command
 yargs.command({
     command: 'add',
     describe: 'Add a new note',
@@ -25,12 +16,48 @@ yargs.command({
             type: 'string'
         },
         body: {
-            describe: 'Note Body',
+            describe: 'Note body',
             demandOption: true,
             type: 'string'
         }
+    },
+    handler: function (argv) {
+        notes.addNote(argv.title, argv.body)
     }
-    
 })
 
+// Create remove command
+yargs.command({
+    command: 'remove',
+    describe: 'remove a note',
+    builder: {
+        title: {
+            describe: 'Note title',
+            demandOption: true,
+            type: 'string'
+        }
+    },
+    handler: function (argv) {
+        notes.removeNote(argv.title);
+    }
+})
 
+// Create list command
+yargs.command({
+    command: 'list',
+    describe: 'List your notes',
+    handler: function () {
+        console.log('Listing out all notes')
+    }
+})
+
+// Create read command
+yargs.command({
+    command: 'read',
+    describe: 'Read a note',
+    handler: function () {
+        console.log('Reading a note')
+    }
+})
+
+yargs.parse()
